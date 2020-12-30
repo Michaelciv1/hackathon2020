@@ -2,9 +2,11 @@ import random
 import discord
 import requests
 import json
+import os
 from keep_alive import keep_alive
 
 client = discord.Client()
+print(os.getenv("TOKEN"))
 
 def get_dogGIF():
   response = requests.get("https://dog.ceo/api/breeds/image/random")
@@ -19,7 +21,6 @@ def get_catGIF():
 def encourage():
   response_list = ["No balls you won't", "I hope you do", "Good"]
   return random.choice(response_list)
-  
 
 @client.event
 async def on_ready():
@@ -43,5 +44,5 @@ async def on_message(message):
       await message.channel.send(encourage())
 
 keep_alive()
-client.run('NzkzMDI5MTAyMjQwMDA2MTY0.X-mT5w.lzXtkeZxFgbD23kOvhi-M-Dzb4c')
+client.run(os.getenv('TOKEN'))
 
