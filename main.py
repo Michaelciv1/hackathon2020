@@ -14,18 +14,21 @@ def get_randomDog():
   print(json_data['message'])
   return json_data['message']
 
-def get_dogByBreed(variation, breed):
+def get_dogTwoWordBreed(variation, breed):
+  url = "https://dog.ceo/api/breed/"+breed+"/"+variation+"/images"
+  print(url)
+  response = requests.get(url)
+  json_data = json.loads(response.text)
+  return json_data['message'][random.randint(0,len(json_data['message']))]
+
+def get_dogOneWordBreed(breed):
   url = "https://dog.ceo/api/breed/"+breed+"/images"
   print(url)
   response = requests.get(url)
   json_data = json.loads(response.text)
-
-  #create a separate list from the main list of just the variations of the breed that we want
-  #maybe try first and last index of the breed then just use random to pick and index for a random photo
-
   return json_data['message'][1]
 
-def get_catGIF():
+def get_cat():
   response = requests.get("https://api.thecatapi.com/v1/images/search")
   json_data = json.loads(response.text)
   return json_data[0]['url']
@@ -48,17 +51,26 @@ async def on_message(message):
       print(True)
       await message.channel.send(get_randomDog())
       return
-    breed = split_msg.split(" ")
-    first_half_breed = breed[0]
-    second_half_breed = breed[1]
-    await message.channel.send(get_dogByBreed(first_half_breed,second_half_breed))
+
+    elif "pitbull" in split_msg:
+      await message.channel.send(file=discord.File('./images/pitbull.jpg'))
+      return
+
+    elif " " in split_msg:
+      breed = split_msg.split(" ")
+      first_half_breed = breed[0]
+      second_half_breed = breed[1]
+      await message.channel.send(get_dogTwoWordBreed(first_half_breed,second_half_breed))
+
+    else:
+      await message.channel.send(get_dogOneWordBreed(split_msg))
 
 
   if msg.startswith('cat please'):
-    await message.channel.send(get_catGIF())
+    await message.channel.send(get_cat())
 
   if msg.startswith('WAP please'):
-    await message.channel.send(get_catGIF())
+    await message.channel.send(get_cat())
 
   if msg.startswith('money please'):
     await message.channel.send(file=discord.File('./images/moneyman.jpeg'))
