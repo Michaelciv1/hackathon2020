@@ -50,6 +50,9 @@ async def on_message(message):
   if msg.startswith('money please'):
     await message.channel.send(file=discord.File('./images/moneyman.jpeg'))
 
+  if msg.startswith('!poggers'):
+    await message.channel.send(file=discord.File('./images/tenor.gif'))
+
 
 keep_alive()
 client.run(os.getenv('TOKEN'))

@@ -23,10 +23,13 @@ class Stonks:
     self.color = self.set_color()
 
   def get_companyInformation(self):
-    url = "https://www.alphavantage.co/query?function=OVERVIEW&symbol="+ self.symbol + "&apikey=" + os.getenv('KEY')
-    response = requests.get(url)
-    json_data = json.loads(response.text)
-    return json_data['Name']
+    try:
+      url = "https://www.alphavantage.co/query?function=OVERVIEW&symbol="+ self.symbol + "&apikey=" + os.getenv('KEY')
+      response = requests.get(url)
+      json_data = json.loads(response.text)
+      return json_data['Name']
+    except:
+      return self.symbol.upper()
 
   def set_color(self):
     if self.company[today.strftime("%Y-%m-%d")]['4. close'] > self.company[today.strftime("%Y-%m-%d")]['1. open']:
@@ -34,10 +37,15 @@ class Stonks:
     else: 
       return 0xEC2B14
 
+  def calculateGain(self):
+    return ((float(self.close)/float(self.open))-1)*100
+
   def print_stockInfo(self):
-    embedVar = discord.Embed(title=self.name, description="Trading data for " + self.symbol.upper() + " for " + str(today.strftime("%B %d, %Y").replace(' 0', ' ')),color=self.color)
-    embedVar.add_field(name="Open", value="$"+str(round(float(self.open),2)),inline=False)
-    embedVar.add_field(name="High", value="$"+str(round(float(self.high),2)), inline=False)
-    embedVar.add_field(name="Low", value="$"+str(round(float(self.low))), inline=False)
-    embedVar.add_field(name="Close", value="$"+str(round(float(self.close),2)), inline=False)
+    embedVar = discord.Embed(title=self.name, description="Trading data for " + self.symbol.upper() + " on " + str(today.strftime("%B %d, %Y").replace(' 0', ' ')),color=self.color)
+    embedVar.set_thumbnail(url="https://pbs.twimg.com/profile_images/1351699608771158016/E_221_pU_400x400.png")
+    embedVar.add_field(name="Open", value="${:.2f}".format(float(self.open)),)
+    embedVar.add_field(name="Close", value="${:.2f}".format(float(self.close)),inline = True)
+    embedVar.add_field(name="Gain/Loss", value="{:.1f}%".format(self.calculateGain()),inline = True)    
+    embedVar.add_field(name="Low", value="${:.2f}".format(float(self.low)))
+    embedVar.add_field(name="High", value="${:.2f}".format(float(self.high)),inline = True)
     return embedVar
